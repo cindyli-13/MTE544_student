@@ -54,7 +54,7 @@ class motion_executioner(Node):
         # TODO Part 3: Create the QoS profile by setting the proper parameters in (...)
         qos=QoSProfile(
             reliability=ReliabilityPolicy.RELIABLE,
-            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            durability=DurabilityPolicy.VOLATILE,
             history=HistoryPolicy.KEEP_LAST,
             depth=10
         )
@@ -86,18 +86,18 @@ class motion_executioner(Node):
         self.imu_logger.log_values([imu_msg.linear_acceleration.x, 
                                     imu_msg.linear_acceleration.y, 
                                     imu_msg.angular_velocity.z, 
-                                    imu_msg.header.stamp.sec*10e9 + imu_msg.header.stamp.nanosec])        
+                                    Time.from_msg(imu_msg.header.stamp).nanoseconds])        
         
     def odom_callback(self, odom_msg: Odometry):
         
         self.odom_logger.log_values([odom_msg.pose.pose.position.x,
                                     odom_msg.pose.pose.position.y,
                                     euler_from_quaternion(odom_msg.pose.pose.orientation),
-                                    odom_msg.header.stamp.sec*10e9 + odom_msg.header.stamp.nanosec])
+                                    Time.from_msg(odom_msg.header.stamp).nanoseconds])
                 
     def laser_callback(self, laser_msg: LaserScan):
         self.laser_logger.log_values([laser_msg.ranges,
-                                      laser_msg.header.stamp.sec*10e9 + laser_msg.header.stamp.nanosec])
+                                      Time.from_msg(laser_msg.header.stamp).nanoseconds])
                 
     def timer_callback(self):
         
