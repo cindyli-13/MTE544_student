@@ -22,7 +22,7 @@ During the 3 hours in the lab, you want to utilize this time to test your code, 
 While in-lab, you are required to use the Desktop PCs and **NOT** your personal setup (VMWare, remote desktop, lent laptop). So, make sure that you have your modified files, either online or on a USB, with you to try it out in-lab.
 
 ## Part 1 - Connect to the robot (5 marks)
-Open the `connectToUWtb4s.md` markdown file in the main branch, and follow along. Read and follow each step carefully. Wait for TA approval before going to next step.
+Open the [connectToUWtb4s.md](https://github.com/aalghooneh/MTE544_student/blob/main/connectToUWtb4s.md) markdown file in the main branch, and follow along. Read and follow each step carefully. Wait for TA approval before going to next step.
 
 ## Part 2 - Play with the robot (5 marks)
 
@@ -73,6 +73,10 @@ To setup your code:
   - https://index.ros.org/p/nav_msgs 
 - Set up the publisher for the robot's motions;
 - Create the QoS profile.
+  
+**Define the QoS profile variable based on whether you are using the simulation (Turtlebot 3 Burger) or the real robot (Turtlebot 4).**
+
+**Use "ros2 topic info /odom --verbose" as explained in Tutorial 3.**
 
 ## Part 4 - Implement the motions (15 marks)
 
@@ -119,13 +123,13 @@ These plots should help you with your discussions at the end of this manual.
 
 - Find ```filePlotter.py``` in the current branch (labOne), and download it.
 - Navigate to its directory, and run: ```python3 filePlotter.py --files imu_content_spiral.csv```
-- Generate plots for the data collected for each motion sequence (laser scans, IMU, and odometry).
+- Generate plots for the data collected for each motion sequence for IMU and Odom.
+- For laserscan, find out how to convert the range matrix into the cartesian, if you have NaN/Inf clean that and then plot only one row of the data.
 
 ## Part 8 - Map acquisition (10 marks)
 
 ROS 2 provides some packages that allow to perform mapping of the environment. This utilized SLAM (Simultaneous Localization and Mapping) provided by the Nav2 package. Find out which maze you should map from the ```List of groups``` excel sheet on LEARN.
 This will be very useful for the later labs, it will be especially needed for LAB-3 and LAB-4.
-
 
 In real world with TurtleBot4:
 
@@ -149,6 +153,8 @@ In simulation with TurtleBot3:
 - Save the map with ```ros2 run nav2_map_server map_saver_cli -f map```. You should see the map saved in the folder where you are currently located. You should have 2 files, one .pgm, and one .yaml.
 
 You do not have to map the entire room, just a sufficient area to see a portion of the map.
+
+**IMPORTANT!! Before you leave, DELETE all of your codes, map files, etc.**
 
 ## Conclusions - Written report (15 marks)
 You can do this part in the lab (time allowing) or at home.
