@@ -42,9 +42,16 @@ class motion_executioner(Node):
         self.spiralW = 0
         self.velX = 0
         
+        qos=QoSProfile(
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            durability=DurabilityPolicy.VOLATILE,
+            history=HistoryPolicy.KEEP_LAST,
+            depth=10
+        )
+
         velocityTopic = "/cmd_vel"
         # TODO Part 3: Create a publisher to send velocity commands by setting the proper parameters in (...)
-        self.vel_publisher=self.create_publisher(Twist, velocityTopic, 10)
+        self.vel_publisher=self.create_publisher(Twist, velocityTopic, qos)
                 
         # loggers
         self.imu_logger=Logger('imu_content_'+str(motion_types[motion_type])+'.csv', headers=["acc_x", "acc_y", "angular_z", "stamp"])
@@ -52,24 +59,19 @@ class motion_executioner(Node):
         self.laser_logger=Logger('laser_content_'+str(motion_types[motion_type])+'.csv', headers=["ranges", "stamp"])
         
         # TODO Part 3: Create the QoS profile by setting the proper parameters in (...)
-        qos=QoSProfile(
-            reliability=ReliabilityPolicy.RELIABLE,
-            durability=DurabilityPolicy.VOLATILE,
-            history=HistoryPolicy.KEEP_LAST,
-            depth=10
-        )
+        
 
         # TODO Part 5: Create below the subscription to the topics corresponding to the respective sensors
         # IMU subscription
-        self.imuSubscriber = self.create_subscription(Imu, '/imu', self.imu_callback, 10)
+        self.imuSubscriber = self.create_subscription(Imu, '/imu', self.imu_callback, qos)
         self.imu_initialized = True
 
         # ENCODER subscription
-        self.encoderSubscriber = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
+        self.encoderSubscriber = self.create_subscription(Odometry, '/odom', self.odom_callback, qos)
         self.odom_initialized = True
         
         # LaserScan subscription 
-        self.laserScanSubscriber = self.create_subscription(LaserScan, '/scan', self.laser_callback, 10)
+        self.laserScanSubscriber = self.create_subscription(LaserScan, '/scan', self.laser_callback, qos)
         self.laser_initialized = True
 
         self.create_timer(0.1, self.timer_callback)
@@ -132,16 +134,16 @@ class motion_executioner(Node):
         msg=Twist()
         ... # fill up the twist msg for circular motion
         
-        msg.linear.x = 1.0
-        msg.angular.z = -1.0
+        msg.linear.x = 0.8
+        msg.angular.z = -1.5
         return msg
 
     def make_spiral_twist(self):
         msg=Twist()
         ... # fill up the twist msg for spiral motion
-        if self.spiralW > -10:
+        if self.spiralW > -5.0:
             msg.linear.x = 1.0
-            self.spiralW -= 0.05
+            self.spiralW -= 0.1
             msg.angular.z = self.spiralW
         
         return msg
@@ -150,7 +152,7 @@ class motion_executioner(Node):
         msg=Twist()
         ... # fill up the twist msg for line motion
 
-        if self.velX < 5:
+        if self.velX < 3.0:
             self.velX += 0.05
             msg.linear.x = self.velX
             msg.angular.z = 0.0
