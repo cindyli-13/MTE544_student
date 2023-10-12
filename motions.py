@@ -38,10 +38,14 @@ class motion_executioner(Node):
         self.imu_initialized=False
         self.odom_initialized=False
         self.laser_initialized=False
-
+        
+        # stores the initial angular velocity for spiral motion
         self.spiralW = 0
+
+        # stores the initial X velocity for straight line
         self.velX = 0
         
+        # TODO Part 3: Create the QoS profile by setting the proper parameters. 
         qos=QoSProfile(
             reliability=ReliabilityPolicy.BEST_EFFORT,
             durability=DurabilityPolicy.VOLATILE,
@@ -56,11 +60,8 @@ class motion_executioner(Node):
         # loggers
         self.imu_logger=Logger('imu_content_'+str(motion_types[motion_type])+'.csv', headers=["acc_x", "acc_y", "angular_z", "stamp"])
         self.odom_logger=Logger('odom_content_'+str(motion_types[motion_type])+'.csv', headers=["x","y","th", "stamp"])
-        self.laser_logger=Logger('laser_content_'+str(motion_types[motion_type])+'.csv', headers=["ranges", "stamp"])
+        self.laser_logger=Logger('laser_content_'+str(motion_types[motion_type])+'.csv', headers=["ranges", "stamp"])      
         
-        # TODO Part 3: Create the QoS profile by setting the proper parameters in (...)
-        
-
         # TODO Part 5: Create below the subscription to the topics corresponding to the respective sensors
         # IMU subscription
         self.imuSubscriber = self.create_subscription(Imu, '/imu', self.imu_callback, qos)
@@ -141,8 +142,10 @@ class motion_executioner(Node):
     def make_spiral_twist(self):
         msg=Twist()
         ... # fill up the twist msg for spiral motion
+        # continue spiraling until angular velocity reaches 5 rad/s CW
         if self.spiralW > -5.0:
             msg.linear.x = 1.0
+            # decrement stored angular velocity value
             self.spiralW -= 0.1
             msg.angular.z = self.spiralW
         
@@ -151,8 +154,9 @@ class motion_executioner(Node):
     def make_acc_line_twist(self):
         msg=Twist()
         ... # fill up the twist msg for line motion
-
+        # continue accelerating until X velocity reaches 3.0 m/s
         if self.velX < 3.0:
+            # increment stored linear velocity
             self.velX += 0.05
             msg.linear.x = self.velX
             msg.angular.z = 0.0
