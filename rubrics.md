@@ -29,7 +29,16 @@
 ## Part 7: 10 marks
  **From Report on LEARN:**
 - ```4``` marks for plots with title, label name for axis, legends, different shapes/colors for each data, and grids.
-- ```2``` marks for plots of linear error, angular error, and state space of each motion. 
+- ```2``` marks for plots to be as following:
+    - for odom two plots:
+        - 'x - vs - y' 
+        - 'x, y, th- vs -t'
+    - for IMU:
+        - 'a_x, a_y, w_z- vs -t'
+    - for scan:
+        - convert the ranges array to cartesian and plot the results
+
+
 
 > 4 + 2 x 3 = 10 
 
