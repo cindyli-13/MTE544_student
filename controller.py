@@ -7,6 +7,8 @@ from utilities import euler_from_quaternion, calculate_angular_error, calculate_
 M_PI=3.1415926535
 
 P=0; PD=1; PI=2; PID=3
+MAX_LINEAR = 0.31
+MAX_ANGULAR = 1.9
 
 class controller:
     
@@ -30,8 +32,10 @@ class controller:
         
         # TODO Part 4: Add saturation limits for the robot linear and angular velocity
 
-        linear_vel = ... if linear_vel > 1.0 else linear_vel
-        angular_vel= ... if angular_vel > 1.0 else angular_vel
+        linear_vel = MAX_LINEAR if linear_vel > MAX_LINEAR else linear_vel
+        linear_vel = -MAX_LINEAR if linear_vel < -MAX_LINEAR else linear_vel
+        angular_vel= MAX_ANGULAR if angular_vel > MAX_ANGULAR else angular_vel
+        angular_vel = -MAX_ANGULAR if angular_vel < -MAX_ANGULAR else angular_vel
         
         return linear_vel, angular_vel
     
@@ -58,8 +62,10 @@ class trajectoryController(controller):
 
         # TODO Part 4: Add saturation limits for the robot linear and angular velocity
 
-        linear_vel = ... if linear_vel > ... else linear_vel
-        angular_vel= ... if angular_vel > ... else angular_vel
+        linear_vel = MAX_LINEAR if linear_vel > MAX_LINEAR else linear_vel
+        linear_vel = -MAX_LINEAR if linear_vel < -MAX_LINEAR else linear_vel
+        angular_vel= MAX_ANGULAR if angular_vel > MAX_ANGULAR else angular_vel
+        angular_vel = -MAX_ANGULAR if angular_vel < -MAX_ANGULAR else angular_vel
         
         return linear_vel, angular_vel
 
