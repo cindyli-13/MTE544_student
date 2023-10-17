@@ -7,6 +7,7 @@ from utilities import FileReader
 def plot_errors(filename):
     
     headers, values=FileReader(filename).read_file()
+    headersPose, valuesPose = FileReader('robot_pose.csv').read_file()
     
     time_list=[]
     
@@ -20,7 +21,7 @@ def plot_errors(filename):
     fig, axes = plt.subplots(1,2, figsize=(14,6))
 
 
-    axes[0].plot([lin[0] for lin in values], [lin[1] for lin in values])
+    axes[0].plot([lin[0] for lin in valuesPose], [lin[1] for lin in valuesPose])
     axes[0].set_title("state space")
     axes[0].grid()
 
