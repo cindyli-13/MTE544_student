@@ -1,6 +1,6 @@
 # Type of planner
 POINT_PLANNER=0; TRAJECTORY_PLANNER=1
-from math import exp
+from math import exp, cos, sin, pi  
 import numpy as np
 
 
@@ -10,6 +10,14 @@ def quadratic(x):
 
 def sigma(x):
     return -3/(1+exp(-3*x))
+
+def rotateByHeading(trajectory, heading):
+    for point in trajectory:
+        x = point[0]
+        y = point[1]
+        point[0] = cos(heading)*x - sin(heading)*y
+        point[1] = sin(heading)*x + cos(heading)*y
+    return trajectory
 
 
 class planner:
@@ -37,12 +45,14 @@ class planner:
     def trajectory_planner(self):
         # parabola trajectory
         dx = 0.1
-        tStart = -1
-        tEnd = 1
+        tStart = -4
+        tEnd = 4
         startingX = -2
         startingY = -0.5
         trajectory = [[quadratic(i), i] for i in np.arange(tEnd, tStart-dx, -dx)]
         x = []
+        trajectory = rotateByHeading(trajectory, -90*pi/180)
+        
         for i in range(len(trajectory)):
             if i == 0:
                 x.append([startingX, startingY])
@@ -52,13 +62,14 @@ class planner:
                 x.append([x[i-1][0]+stepX, x[i-1][1]+stepY])
 
         # other thing trajectory
-        # dx = 0.5
-        # tStart = -3
-        # tEnd = 3
+        # dx = 0.1
+        # tStart = -6
+        # tEnd = 6
         # startingX = -2
         # startingY = -0.5
         # trajectory = [[i, sigma(i)] for i in np.arange(tStart, tEnd+dx, dx)]
         # x = []
+        # trajectory = rotateByHeading(trajectory, -90*pi/180)
         # for i in range(len(trajectory)):
         #     if i == 0:
         #         x.append([startingX, startingY])
