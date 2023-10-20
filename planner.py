@@ -6,10 +6,10 @@ import numpy as np
 
 
 def quadratic(x):
-    return -x**2
+    return x**2
 
 def sigma(x):
-    return -3/(1+exp(-3*x))
+    return -1/(1+exp(-4*x))
 
 def rotateByHeading(trajectory, heading):
     for point in trajectory:
@@ -44,32 +44,15 @@ class planner:
     # TODO Part 6: Implement the trajectories here
     def trajectory_planner(self):
         # parabola trajectory
-        dx = 0.1
-        tStart = -4
-        tEnd = 4
-        startingX = -2
-        startingY = -0.5
-        trajectory = [[quadratic(i), i] for i in np.arange(tEnd, tStart-dx, -dx)]
-        x = []
-        trajectory = rotateByHeading(trajectory, -90*pi/180)
-        
-        for i in range(len(trajectory)):
-            if i == 0:
-                x.append([startingX, startingY])
-            else:
-                stepX = trajectory[i][0]-trajectory[i-1][0]
-                stepY = trajectory[i][1]-trajectory[i-1][1]
-                x.append([x[i-1][0]+stepX, x[i-1][1]+stepY])
-
-        # other thing trajectory
         # dx = 0.1
-        # tStart = -6
-        # tEnd = 6
-        # startingX = -2
-        # startingY = -0.5
-        # trajectory = [[i, sigma(i)] for i in np.arange(tStart, tEnd+dx, dx)]
+        # tStart = -1
+        # tEnd = 1
+        # startingX = -1.389
+        # startingY = -0.044
+        # trajectory = [[quadratic(i), i] for i in np.arange(tEnd, tStart-dx, -dx)]
         # x = []
-        # trajectory = rotateByHeading(trajectory, -90*pi/180)
+        # # trajectory = rotateByHeading(trajectory, -90*pi/180)
+        
         # for i in range(len(trajectory)):
         #     if i == 0:
         #         x.append([startingX, startingY])
@@ -77,6 +60,24 @@ class planner:
         #         stepX = trajectory[i][0]-trajectory[i-1][0]
         #         stepY = trajectory[i][1]-trajectory[i-1][1]
         #         x.append([x[i-1][0]+stepX, x[i-1][1]+stepY])
+
+        # other thing trajectory
+        dx = 0.1
+        tStart = -1
+        tEnd = 1
+        startingX = -3.6
+        startingY = -1.9
+        trajectory = [[sigma(i), i] for i in np.arange(tEnd, tStart-dx, -dx)]
+        x = []
+        print(trajectory)
+        # trajectory = rotateByHeading(trajectory, -90*pi/180)
+        for i in range(len(trajectory)):
+            if i == 0:
+                x.append([startingX, startingY])
+            else:
+                stepX = trajectory[i][0]-trajectory[i-1][0]
+                stepY = trajectory[i][1]-trajectory[i-1][1]
+                x.append([x[i-1][0]+stepX, x[i-1][1]+stepY])
         # print(x)
         return x
         # the return should be a list of trajectory points: [ [x1,y1], ..., [xn,yn]]
