@@ -15,6 +15,7 @@ class PID_ctrl:
         self.history_length=history_length
         self.history=[]
         self.type=type_
+        self.error_int = 0
 
         # Controller gains
         self.kp=kp    # proportional gain
@@ -64,7 +65,8 @@ class PID_ctrl:
 
             # use constant dt if the messages arrived inconsistent
             # for example dt=0.1 overwriting the calculation          
-            
+            if dt < 0.00001:
+                dt = 0.1
             # TODO Part 5: calculate the error dot 
             error_dot+= ( self.history[i][0] - self.history[i-1][0] ) / dt
             
@@ -77,8 +79,9 @@ class PID_ctrl:
             # TODO Part 5: Gather the integration
             sum_ += hist[0]
         
-        sum_ /= len(self.history)
-        error_int=sum_*dt_avg
+        # sum_ /= len(self.history)
+        # self.error_int += latest_error*dt_avg
+        error_int = sum_*dt_avg
         print("Error: " + str(latest_error))
         
         # TODO Part 4: Log your errors

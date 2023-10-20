@@ -27,7 +27,7 @@ class decision_maker(Node):
     def __init__(self, publisher_msg, publishing_topic, qos_publisher, goalPoint, rate=10, motion_type=POINT_PLANNER):
 
         super().__init__("decision_maker")       
-        self.threshold = 0.1 # WILL TUNE
+        self.threshold = 0.05 # WILL TUNE
 
         #TODO Part 4: Create a publisher for the topic responsible for robot's motion
         self.publisher=self.create_publisher(publisher_msg, publishing_topic, qos_publisher)
