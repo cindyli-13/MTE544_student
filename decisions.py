@@ -15,7 +15,7 @@ from nav_msgs.msg import Odometry as odom
 
 from localization import localization, rawSensor
 
-from planner import TRAJECTORY_PLANNER, POINT_PLANNER, planner
+from planner import TRAJECTORY_PLANNER, POINT_PLANNER, planner, QUADRATIC, SIGMOID
 from controller import controller, trajectoryController
 
 # You may add any other imports you may need/want to use below
@@ -24,10 +24,10 @@ from controller import controller, trajectoryController
 
 class decision_maker(Node):
     
-    def __init__(self, publisher_msg, publishing_topic, qos_publisher, goalPoint, rate=10, motion_type=POINT_PLANNER):
+    def __init__(self, publisher_msg, publishing_topic, qos_publisher, goalPoint, rate=10, motion_type=POINT_PLANNER, trajectory_type=QUADRATIC):
 
         super().__init__("decision_maker")       
-        self.threshold = 0.05 # WILL TUNE
+        self.threshold = 0.05 # the threshold where we consider the robot has reached its final position
 
         #TODO Part 4: Create a publisher for the topic responsible for robot's motion
         self.publisher=self.create_publisher(publisher_msg, publishing_topic, qos_publisher)
@@ -44,7 +44,7 @@ class decision_maker(Node):
     
         elif motion_type==TRAJECTORY_PLANNER:
             self.controller=trajectoryController(klp=0.6, klv=0.5, kap=1, kav=0.3)
-            self.planner=planner(TRAJECTORY_PLANNER)
+            self.planner=planner(TRAJECTORY_PLANNER, trajectoryType=trajectory_type)
 
         else:
             print("Error! you don't have this planner", file=sys.stderr)
@@ -64,7 +64,7 @@ class decision_maker(Node):
         
         # TODO Part 3: Run the localization node
         # Remember that this file is already running the decision_maker node.
-        spin_once(self.localizer, timeout_sec=0) # non-blocking
+        spin_once(self.localizer, timeout_sec=0) # non-blocking with timeout_sec=0
 
 
         if self.localizer.getPose()  is  None:
@@ -75,7 +75,7 @@ class decision_maker(Node):
 
         vel_msg=Twist()
         # TODO Part 3: Check if you reached the goal
-        if type(self.goal) == list:
+        if type(self.goal) == list: # if in trajectory mode, check that it reached the last goal point in the list. 
             reached_goal= calculate_linear_error(self.localizer.getPose(), self.goal[-1]) < self.threshold
         else: 
             reached_goal= calculate_linear_error(self.localizer.getPose(), self.goal) < self.threshold 
@@ -113,9 +113,9 @@ def main(args=None):
 
     # TODO Part 3: instantiate the decision_maker with the proper parameters for moving the robot
     if args.motion.lower() == "point":
-        DM=decision_maker(Twist, "/cmd_vel", odom_qos, (-3.9, -1.52, 0.0))
+        DM=decision_maker(Twist, "/cmd_vel", odom_qos, (-3.9, -1.52, 0.0)) # input goal point as a tuple to avoid hitting the wrong ending point condition
     elif args.motion.lower() == "trajectory":
-        DM=decision_maker(Twist, "/cmd_vel", odom_qos, [], motion_type=TRAJECTORY_PLANNER)
+        DM=decision_maker(Twist, "/cmd_vel", odom_qos, [], motion_type=TRAJECTORY_PLANNER, trajectory_type=SIGMOID) # trajectory_type=QUADRATIC for quadratic motion
     else:
         print("invalid motion type", file=sys.stderr)        
     
