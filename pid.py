@@ -79,8 +79,8 @@ class PID_ctrl:
             # TODO Part 5: Gather the integration
             sum_ += hist[0]
         
-        sum_ /= len(self.history)
-        # self.error_int += latest_error*dt_avg
+        sum_ /= len(self.history) #taking the average error
+
         error_int = sum_*dt_avg
         print("Error: " + str(latest_error))
         
