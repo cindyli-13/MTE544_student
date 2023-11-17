@@ -8,7 +8,7 @@ from utilities import euler_from_quaternion, calculate_angular_error, calculate_
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 
-from rclpy.qos import QoSProfile
+from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 from nav_msgs.msg import Odometry as odom
 
 from sensor_msgs.msg import Imu
@@ -21,7 +21,7 @@ import message_filters
 
 rawSensors=0
 kalmanFilter=1
-odom_qos=QoSProfile(reliability=2, durability=2, history=1, depth=10)
+odom_qos=QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT, durability=DurabilityPolicy.VOLATILE, history=HistoryPolicy.KEEP_LAST, depth=10)
 
 class localization(Node):
     
@@ -49,11 +49,15 @@ class localization(Node):
         
         x= [0,0,0,0,0,0]
         
-        Q= 0.5*np.identity(6)
+        Q= 0.2*np.identity(6)
+   
+        R= np.matrix([[0.5, 0.0, 0.0, 0.0],
+                     [0.0, 0.5, 0.0, 0.0],
+                     [0.0, 0.0, 20.0, 0.0],
+                     [0.0, 0.0, 0.0, 20.0]]).A
 
-        R= 0.5*np.identity(4)
-        
-        P= 10*np.identity(6) # initial covariance
+
+        P= np.identity(6) # initial covariance
         
         self.kf=kalman_filter(P,Q,R, x, dt)
 
@@ -107,6 +111,6 @@ if __name__=="__main__":
     
     init()
     
-    LOCALIZER=localization()
+    LOCALIZER=localization(type=kalmanFilter, dt=0.1)
     
     spin(LOCALIZER)
