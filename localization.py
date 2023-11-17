@@ -25,7 +25,7 @@ odom_qos=QoSProfile(reliability=2, durability=2, history=1, depth=10)
 
 class localization(Node):
     
-    def __init__(self, type, dt, loggerName="robotPose.csv", loggerHeaders=["imu_ax", "imu_ay", "kf_ax", "kf_ay","kf_vx","kf_w","kf_x", "kf_y","stamp"]):
+    def __init__(self, type, dt, loggerName="robotPose.csv", loggerHeaders=["imu_ax", "imu_ay", "kf_ax", "kf_ay","odom_v", "odom_w", "kf_vx","kf_w", "odom_x", "odom_y", "kf_x", "kf_y","odom_th", "kf_th","stamp"]):
 
         super().__init__("localizer")
 
@@ -86,8 +86,10 @@ class localization(Node):
         # Update the pose estimate to be returned by getPose
         self.pose=[xhat[0], xhat[1], xhat[2], odom_msg.header.stamp]
 
+        measurementModel = self.kf.measurement_model()
         # TODO Part 4: log your data
-        self.loc_logger.log_values([xhat[0], xhat[1], xhat[2], Time.from_msg(odom_msg.header.stamp).nanoseconds])
+        self.loc_logger.log_values([z[2], z[3], measurementModel[2], measurementModel[3], z[0], z[1], xhat[4], xhat[3], odom_msg.pose.pose.position.x, 
+                                    odom_msg.pose.pose.position.y, xhat[0], xhat[1], euler_from_quaternion(odom_msg.pose.pose.orientation), xhat[2], Time.from_msg(odom_msg.header.stamp).nanoseconds])
       
     def odom_callback(self, pose_msg):
         

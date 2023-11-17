@@ -17,20 +17,34 @@ def plot_errors(filename):
 
     
     
-    fig, axes = plt.subplots(2,1, figsize=(14,6))
+    fig, axes = plt.subplots(2,2)
 
 
-    axes[0].plot([lin[len(headers) - 3] for lin in values], [lin[len(headers) - 2] for lin in values])
-    axes[0].set_title("state space")
-    axes[0].grid()
+    axes[0][0].plot([lin[len(headers) - 3] for lin in values], [lin[len(headers) - 2] for lin in values])
+    axes[0][0].set_title("state space")
+    axes[0][0].grid()
 
     
-    axes[1].set_title("each individual state")
-    for i in range(0, len(headers) - 1):
-        axes[1].plot(time_list, [lin[i] for lin in values], label= headers[i])
+    axes[0][1].set_title("IMU")
+    for i in range(0, 4):
+        axes[0][1].plot(time_list, [lin[i] for lin in values], label= headers[i])
 
-    axes[1].legend()
-    axes[1].grid()
+    axes[0][1].legend()
+    axes[0][1].grid()
+
+    axes[1][0].set_title("V and W")
+    for i in range(4, 8):
+        axes[1][0].plot(time_list, [lin[i] for lin in values], label= headers[i])
+
+    axes[1][0].legend()
+    axes[1][0].grid()
+
+    axes[1][1].set_title("X and Y and Theta")
+    for i in range(8, 14):
+        axes[1][1].plot(time_list, [lin[i] for lin in values], label= headers[i])
+
+    axes[1][1].legend()
+    axes[1][1].grid()
 
     plt.show()
     
