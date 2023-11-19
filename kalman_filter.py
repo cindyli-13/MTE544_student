@@ -73,7 +73,7 @@ class kalman_filter:
             v,# v
             w,# w
             vdot, # ax
-            v*w, # ay
+            v*w, # ay, centripetal acceleration since y-axis of robot points toward centre of rotation. ay = v^2/r = v^2/(v/w) = v*w
         ])
         
     # TODO Part 3: Impelment the motion model (state-transition matrice)
@@ -106,12 +106,12 @@ class kalman_filter:
         
         return np.array([
             #x, y,      th,              w,          v,              vdot
-            [1, 0,     -v*np.sin(th)*dt, 0,          np.cos(th)*dt,  0],
-            [0, 1,      v*np.cos(th)*dt, 0,          np.sin(th)*dt,  0],
-            [0, 0,      1,               dt,         0,              0],
-            [0, 0,      0,               1,          0,              0],
-            [0, 0,      0,               0,          1,              dt],
-            [0, 0,      0,               0,          0,              1 ]
+            [1, 0,     -v*np.sin(th)*dt, 0,          np.cos(th)*dt,  0], # x
+            [0, 1,      v*np.cos(th)*dt, 0,          np.sin(th)*dt,  0], # y
+            [0, 0,      1,               dt,         0,              0], # th
+            [0, 0,      0,               1,          0,              0], # w
+            [0, 0,      0,               0,          1,              dt], # v
+            [0, 0,      0,               0,          0,              1 ] # vdot
         ])
     
     

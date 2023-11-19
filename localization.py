@@ -47,17 +47,20 @@ class localization(Node):
         
         # TODO Part 3: Set up the quantities for the EKF (hint: you will need the functions for the states and measurements)
         
+        # initial states
         x= [0,0,0,0,0,0]
         
+        # covariance matrix for motion model ( process noise )
         Q= 0.2*np.identity(6)
    
+        # covariance matrix for sensor model ( measurement noise )
         R= np.matrix([[0.5, 0.0, 0.0, 0.0],
                      [0.0, 0.5, 0.0, 0.0],
                      [0.0, 0.0, 20.0, 0.0],
                      [0.0, 0.0, 0.0, 20.0]]).A
 
 
-        P= np.identity(6) # initial covariance
+        P= np.identity(6) # initial covariance of state errors
         
         self.kf=kalman_filter(P,Q,R, x, dt)
 

@@ -33,6 +33,8 @@ class decision_maker(Node):
 
 
         # TODO Part 3: use the Kalman Filter
+        # dt is calculated by checking how often localization::fusion_callback() is called. it was approximated to 
+        # 1 decimal place.
         self.localizer=localization(type=kalmanFilter, dt=0.1)
         
         if motion_type==POINT_PLANNER:
