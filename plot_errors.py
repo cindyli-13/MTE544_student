@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from utilities import FileReader
-
+plt.rcParams.update({'font.size':14})
 
 
 
@@ -18,10 +18,12 @@ def plot_errors(filename):
     
     
     fig, axes = plt.subplots(2,2)
-
-
+    fig.tight_layout()
+    fig.suptitle('Spiral Q=0.5 R=0.1')
     axes[0][0].plot([lin[len(headers) - 5] for lin in values], [lin[len(headers) - 4] for lin in values])
     axes[0][0].set_title("state space")
+    axes[0][0].set_xlabel('X (m)')
+    axes[0][0].set_ylabel('Y (m)')
     axes[0][0].grid()
 
     
@@ -29,6 +31,7 @@ def plot_errors(filename):
     for i in range(0, 4):
         axes[0][1].plot(time_list, [lin[i] for lin in values], label= headers[i])
 
+    axes[0][1].set_xlabel('Time (ns)')
     axes[0][1].legend()
     axes[0][1].grid()
 
@@ -36,6 +39,7 @@ def plot_errors(filename):
     for i in range(4, 8):
         axes[1][0].plot(time_list, [lin[i] for lin in values], label= headers[i])
 
+    axes[1][0].set_xlabel('Time (ns)')
     axes[1][0].legend()
     axes[1][0].grid()
 
@@ -43,6 +47,7 @@ def plot_errors(filename):
     for i in range(8, 14):
         axes[1][1].plot(time_list, [lin[i] for lin in values], label= headers[i])
 
+    axes[1][1].set_xlabel('Time (ns)')
     axes[1][1].legend()
     axes[1][1].grid()
 
