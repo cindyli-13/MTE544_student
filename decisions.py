@@ -26,6 +26,7 @@ from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Path
 from geometry_msgs.msg import PoseStamped
 
+
 class decision_maker(Node):
     
     
@@ -43,10 +44,10 @@ class decision_maker(Node):
         publishing_period=1/rate
 
         # TODO PART 5 choose your threshold
-        self.reachThreshold=...
+        self.reachThreshold=0.01
 
         # TODO PART 5 your localization type
-        self.localizer=localization(...)
+        self.localizer=localization(type=kalmanFilter)
 
 
         
@@ -57,7 +58,7 @@ class decision_maker(Node):
         
         elif motion_type==TRAJECTORY_PLANNER:
             # TODO PART 5 Bonus Put the gains that you conclude from lab 2
-            self.controller=trajectoryController(...)      
+            self.controller=trajectoryController(klp=0.6, klv=0.5, kap=1, kav=0.3)      
             self.planner=planner(TRAJECTORY_PLANNER)
         
         else:

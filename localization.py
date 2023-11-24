@@ -73,9 +73,16 @@ class localization(Node):
             
             # TODO PART 5 Bonus put the Q and R matrices
             # that you conclude from lab Three
-            Q=...
-            R=...
-            P=...
+            Q= 0.2*np.identity(6)
+   
+            # covariance matrix for sensor model ( measurement noise )
+            R= np.matrix([[0.5, 0.0, 0.0, 0.0],
+                        [0.0, 0.5, 0.0, 0.0],
+                        [0.0, 0.0, 20.0, 0.0],
+                        [0.0, 0.0, 0.0, 20.0]]).A
+
+
+            P= np.identity(6) # initial covariance of state errors
                         
             self.kf=kalman_filter(P,Q,R, x)
             
