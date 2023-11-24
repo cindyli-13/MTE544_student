@@ -129,13 +129,13 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
                 d) else move the child to yet_to_visit list
     """
     # TODO PART 4 find maze has got how many rows and columns 
-    no_rows, no_columns = maze.shape()
+    no_rows, no_columns = maze.shape
     
 
     # Loop until you find the end
     
     while len(yet_to_visit_list) > 0:
-        
+        print(len(yet_to_visit_list))
         # Every time any node is referred from yet_to_visit list, counter of limit operation incremented
         outer_iterations += 1    
 
