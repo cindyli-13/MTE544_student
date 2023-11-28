@@ -48,7 +48,7 @@ class planner:
         endPose=self.m_utilites.position_2_cell(endPoseCart)
         
         # TODO PART 5 convert the cell pixels into the cartesian coordinates
-        path_cell = search(self.costMap, startPose, endPose, [0,0], "euclidean")
+        path_cell = search(self.costMap, startPose, endPose, "euclidean")
         path_cart = list(map(self.m_utilites.cell_2_position, path_cell))
 
 
@@ -64,12 +64,7 @@ if __name__=="__main__":
     rclpy.init()
 
     m_utilites=mapManipulator()
-    
     map_likelihood=m_utilites.make_likelihood_field()
+    path=search(map_likelihood, (0,0), (200,163), 'euclidean') # changed 0 to [0,0]
 
-    
-    
-    
-    path=search(map_likelihood, (0,0), (70,90), (100,90), 'euclidean') # changed 0 to [0,0]
-    
-    print( list(map(m_utilites.cell_2_position, path)))
+    print(list(map(m_utilites.cell_2_position, path)))

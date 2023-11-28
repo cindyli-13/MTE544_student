@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt
+import time
 
 
 class Node:
@@ -20,6 +21,7 @@ class Node:
         self.g = 0
         self.h = 0
         self.f = 0
+
     def __eq__(self, other):
         return self.position == other.position
     
@@ -52,13 +54,7 @@ def return_path(current_node,maze):
     return path
 
 
-def search(maze, start, end, mazeOrigin, heuristics_mode):
-
-    print("searching ....")
-
-    maze = maze.T
-    
-    
+def search(maze, start, end, heuristics_mode):
     """
         Returns a list of tuples as a path from the given start to the given end in the given maze
         :param maze:
@@ -68,13 +64,16 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
         :return:
     """
 
+    start_time = time.time()
+    print("searching ....")
+    maze = maze.T
+
     # TODO PART 4 Create start and end node with initized values for g, h and f
     start_node = Node(position=start)
     start_node.g = 0
     start_node.h = heuristics(heuristics_mode, start, end)
     start_node.f = start_node.g + start_node.h
 
-    
     end_node = Node(position=end)
     end_node.g = 0
     end_node.h = 0
@@ -86,16 +85,16 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
     yet_to_visit_list = []  
     # in this list we will put all node those already explored so that we don't explore it again
     visited_list = [] 
-    
+
     # Add the start node
     yet_to_visit_list.append(start_node)
-    
+
     # Adding a stop condition. This is to avoid any infinite loop and stop 
     # execution after some reasonable number of steps
     outer_iterations = 0
     max_iterations = (len(maze) // 2) ** 10
 
-    
+
     # TODO PART 4 what squares do we search . serarch movement is left-right-top-bottom 
     #(4 movements) from every positon
     x_dist = 1
@@ -129,7 +128,7 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
     """
     # TODO PART 4 find maze has got how many rows and columns 
     no_rows, no_columns = maze.shape
-    
+
 
     # Loop until you find the end
     while len(yet_to_visit_list) > 0:
@@ -152,17 +151,12 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
 
         # test if goal is reached or not, if yes then return the path
         if current_node == end_node:
+            execution_time = time.time() - start_time
+            print("A* search execution time: {:.3f} s".format(execution_time))
             return return_path(current_node,maze)
 
         # Pop current node out off yet_to_visit list, add to visited list
         yet_to_visit_list.pop(current_index)
-
-        # With the way the code is set up it is possible that there are duplicates of the same node in 
-        # visited_list but with different g values. As a band-aid fix, we skip searching the current 
-        # node if it has already been searched.
-        if current_node in visited_list:
-            continue
-
         visited_list.append(current_node)
 
         for new_position in move: 
@@ -171,7 +165,7 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
             # TODO PART 4 Make sure within range (check if within maze boundary)
-            if (node_position[0] < 0 or node_position[0] >= no_rows or node_position[1] < 0 or node_position[1] >= no_columns ):
+            if node_position[0] < 0 or node_position[0] >= no_rows or node_position[1] < 0 or node_position[1] >= no_columns:
                 continue
 
             # Make sure walkable terrain
@@ -180,21 +174,26 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
 
             # Create new node
             child = Node(current_node, node_position)
-  
+
             # TODO PART 4 Child is on the visited list (search entire visited list) 
             if len([i for i in visited_list if child == i]) > 0:
                 continue
 
             # TODO PART 4 Create the f, g, and h values
             child.g = sqrt((current_node.position[0] - child.position[0])**2 + (current_node.position[1] - child.position[1])**2) + current_node.g
-            ## Heuristic costs calculated here, this is using eucledian distance
+            # Heuristic costs calculated here, this is using eucledian distance
             child.h = heuristics(heuristics_mode, child.position, end_node.position)
 
             child.f = child.g + child.h
 
-            # Child is already in the yet_to_visit list and g cost is already lower
-            if len([i for i in yet_to_visit_list if child == i and child.g >= i.g]) > 0:
-                continue
-
-            # Add the child to the yet_to_visit list
-            yet_to_visit_list.append(child)
+            already_in_list = False
+            for i in yet_to_visit_list:
+                if child == i:
+                    # Child is already in the yet_to_visit list and g cost is already lower
+                    if child.g < i.g:
+                        i.g = child.g
+                    already_in_list = True
+                    break
+            if not already_in_list:
+                # Add the child to the yet_to_visit list
+                yet_to_visit_list.append(child)
