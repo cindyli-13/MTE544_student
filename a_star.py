@@ -189,9 +189,10 @@ def search(maze, start, end, heuristics_mode):
             already_in_list = False
             for i in yet_to_visit_list:
                 if child == i:
-                    # Child is already in the yet_to_visit list and g cost is already lower
+                    # Child is already in the yet_to_visit list and new g cost is lower
                     if child.g < i.g:
                         i.g = child.g
+                        i.f = child.f
                     already_in_list = True
                     break
             if not already_in_list:
