@@ -70,6 +70,6 @@ if __name__=="__main__":
     
     
     
-    path=search(map_likelihood, [0,0], [70,90], [100,90], 'euclidean') # changed 0 to [0,0]
+    path=search(map_likelihood, (0,0), (70,90), (100,90), 'euclidean') # changed 0 to [0,0]
     
     print( list(map(m_utilites.cell_2_position, path)))

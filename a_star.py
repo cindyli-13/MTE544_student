@@ -26,7 +26,7 @@ class Node:
 def heuristics(mode, current_position, end_position):
     if mode == 'euclidean':
         return sqrt((end_position[0]-current_position[0])**2 + (end_position[1]-current_position[1])**2)
-    elif mode == 'manhatten':
+    elif mode == 'manhattan':
         return abs(end_position[0]-current_position[0]) + abs(end_position[1]-current_position[1])
     else:
         print("no mode exists")
@@ -49,7 +49,6 @@ def return_path(current_node,maze):
     for i in range(len(path)):
         result[path[i][0]][path[i][1]] = start_value
         start_value += 1
-
     return path
 
 
@@ -133,13 +132,10 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
     
 
     # Loop until you find the end
-    
     while len(yet_to_visit_list) > 0:
-        print(len(yet_to_visit_list))
         # Every time any node is referred from yet_to_visit list, counter of limit operation incremented
         outer_iterations += 1    
 
-        
         # Get the current node
         current_node = yet_to_visit_list[0]
         current_index = 0
@@ -147,24 +143,27 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
             if item.f < current_node.f:
                 current_node = item
                 current_index = index
-                
+
         # if we hit this point return the path such as it may be no solution or 
         # computation cost is too high
         if outer_iterations > max_iterations:
             print ("giving up on pathfinding too many iterations")
             return return_path(current_node,maze)
 
-        # Pop current node out off yet_to_visit list, add to visited list
-        yet_to_visit_list.pop(current_index)
-        visited_list.append(current_node)
-
         # test if goal is reached or not, if yes then return the path
         if current_node == end_node:
-
             return return_path(current_node,maze)
 
-        # Generate children from all adjacent squares
-        children = []
+        # Pop current node out off yet_to_visit list, add to visited list
+        yet_to_visit_list.pop(current_index)
+
+        # With the way the code is set up it is possible that there are duplicates of the same node in 
+        # visited_list but with different g values. As a band-aid fix, we skip searching the current 
+        # node if it has already been searched.
+        if current_node in visited_list:
+            continue
+
+        visited_list.append(current_node)
 
         for new_position in move: 
 
@@ -172,7 +171,7 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
             # TODO PART 4 Make sure within range (check if within maze boundary)
-            if (node_position[0] < 0 or node_position[0] > no_rows or node_position[1] < 0 or node_position[1] > no_columns ):
+            if (node_position[0] < 0 or node_position[0] >= no_rows or node_position[1] < 0 or node_position[1] >= no_columns ):
                 continue
 
             # Make sure walkable terrain
@@ -180,14 +179,7 @@ def search(maze, start, end, mazeOrigin, heuristics_mode):
                 continue
 
             # Create new node
-            new_node = Node(current_node, node_position)
-
-            # Append
-            children.append(new_node)
-
-        # Loop through children
-        
-        for child in children:
+            child = Node(current_node, node_position)
   
             # TODO PART 4 Child is on the visited list (search entire visited list) 
             if len([i for i in visited_list if child == i]) > 0:
