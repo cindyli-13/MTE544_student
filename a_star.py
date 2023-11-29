@@ -82,9 +82,13 @@ def search(maze, start, end, heuristics_mode):
     # Initialize both yet_to_visit and visited list
     # in this list we will put all node that are yet_to_visit for exploration. 
     # From here we will find the lowest cost node to expand next
-    yet_to_visit_list = dict() # key = position, value = node
+    yet_to_visit_list = dict() # key = position, value = node object
     # in this list we will put all node those already explored so that we don't explore it again
     visited_list = set() # set of node positions that have already been visited
+
+    # Note that for the yet_to_visit and visited lists, we store the node position instead of the node
+    # object as the dict key or set element because node position is a tuple of (x,y) that is 1) hashable
+    # and 2) sufficient for checking if two nodes are equivalent.
 
     # Add the start node
     yet_to_visit_list[start_node.position] = start_node
@@ -118,13 +122,12 @@ def search(maze, start, end, heuristics_mode):
             a) get the current postion for the selected node (this becomes parent node for the children)
             b) check if a valid position exist (boundary will make few nodes invalid)
             c) if any node is a wall then ignore that
-            d) add to valid children node list for the selected parent
-            
-            For all the children node
-                a) if child in visited list then ignore it and try next node
-                b) calculate child node g, h and f values
-                c) if child in yet_to_visit list then ignore it
-                d) else move the child to yet_to_visit list
+            d) if child in visited list then ignore it and try next node
+            e) calculate child node g, h and f values
+            f) if child in yet_to_visit list then
+                f.1) if new child has lower g value, update yet_to_visit list with new child
+                f.2) else ignore it
+            g) else move the child to yet_to_visit list
     """
     # TODO PART 4 find maze has got how many rows and columns 
     no_rows, no_columns = maze.shape
@@ -135,7 +138,7 @@ def search(maze, start, end, heuristics_mode):
         # Every time any node is referred from yet_to_visit list, counter of limit operation incremented
         outer_iterations += 1    
 
-        # Pop current node out off yet_to_visit list
+        # Find the node in yet_to_visit list with the lowest f value and select it as the current node
         current_node = yet_to_visit_list.pop(min(yet_to_visit_list.items(), key=lambda x: x[1].f)[0])
 
         # if we hit this point return the path such as it may be no solution or 
@@ -182,7 +185,9 @@ def search(maze, start, end, heuristics_mode):
 
             if child.position in yet_to_visit_list:
                 if child.g < yet_to_visit_list[child.position].g:
-                    yet_to_visit_list[child.position].g = child.g
-                    yet_to_visit_list[child.position].f = child.f
+                    yet_to_visit_list[child.position] = child
             else:
                 yet_to_visit_list[child.position] = child
+
+    print("no path exists")
+    return []
