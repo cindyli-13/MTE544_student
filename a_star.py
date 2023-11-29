@@ -82,12 +82,12 @@ def search(maze, start, end, heuristics_mode):
     # Initialize both yet_to_visit and visited list
     # in this list we will put all node that are yet_to_visit for exploration. 
     # From here we will find the lowest cost node to expand next
-    yet_to_visit_list = []  
+    yet_to_visit_list = dict() # key = position, value = node
     # in this list we will put all node those already explored so that we don't explore it again
-    visited_list = [] 
+    visited_list = set() # set of node positions that have already been visited
 
     # Add the start node
-    yet_to_visit_list.append(start_node)
+    yet_to_visit_list[start_node.position] = start_node
 
     # Adding a stop condition. This is to avoid any infinite loop and stop 
     # execution after some reasonable number of steps
@@ -135,13 +135,8 @@ def search(maze, start, end, heuristics_mode):
         # Every time any node is referred from yet_to_visit list, counter of limit operation incremented
         outer_iterations += 1    
 
-        # Get the current node
-        current_node = yet_to_visit_list[0]
-        current_index = 0
-        for index, item in enumerate(yet_to_visit_list):
-            if item.f < current_node.f:
-                current_node = item
-                current_index = index
+        # Pop current node out off yet_to_visit list
+        current_node = yet_to_visit_list.pop(min(yet_to_visit_list.items(), key=lambda x: x[1].f)[0])
 
         # if we hit this point return the path such as it may be no solution or 
         # computation cost is too high
@@ -155,9 +150,8 @@ def search(maze, start, end, heuristics_mode):
             print("A* search execution time: {:.3f} s".format(execution_time))
             return return_path(current_node,maze)
 
-        # Pop current node out off yet_to_visit list, add to visited list
-        yet_to_visit_list.pop(current_index)
-        visited_list.append(current_node)
+        # Add current node to visited list
+        visited_list.add(current_node.position)
 
         for new_position in move: 
 
@@ -176,7 +170,7 @@ def search(maze, start, end, heuristics_mode):
             child = Node(current_node, node_position)
 
             # TODO PART 4 Child is on the visited list (search entire visited list) 
-            if len([i for i in visited_list if child == i]) > 0:
+            if child.position in visited_list:
                 continue
 
             # TODO PART 4 Create the f, g, and h values
@@ -186,15 +180,9 @@ def search(maze, start, end, heuristics_mode):
 
             child.f = child.g + child.h
 
-            already_in_list = False
-            for i in yet_to_visit_list:
-                if child == i:
-                    # Child is already in the yet_to_visit list and new g cost is lower
-                    if child.g < i.g:
-                        i.g = child.g
-                        i.f = child.f
-                    already_in_list = True
-                    break
-            if not already_in_list:
-                # Add the child to the yet_to_visit list
-                yet_to_visit_list.append(child)
+            if child.position in yet_to_visit_list:
+                if child.g < yet_to_visit_list[child.position].g:
+                    yet_to_visit_list[child.position].g = child.g
+                    yet_to_visit_list[child.position].f = child.f
+            else:
+                yet_to_visit_list[child.position] = child
