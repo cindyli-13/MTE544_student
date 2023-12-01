@@ -150,7 +150,7 @@ def search(maze, start, end, heuristics_mode):
         # test if goal is reached or not, if yes then return the path
         if current_node == end_node:
             execution_time = time.time() - start_time
-            print("A* search execution time: {:.3f} s".format(execution_time))
+            print("A* search execution time: {:.5f} ms".format(execution_time*1000))
             return return_path(current_node,maze)
 
         # Add current node to visited list

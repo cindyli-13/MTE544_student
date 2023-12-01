@@ -103,6 +103,7 @@ class decision_maker(Node):
             return
         
         if type(self.goal) == list:
+            print(self.goal)
             reached_goal=True if calculate_linear_error(self.localizer.getPose(), self.goal[-1]) <self.reachThreshold else False
         else: 
             reached_goal=True if calculate_linear_error(self.localizer.getPose(), self.goal) <self.reachThreshold else False

@@ -33,7 +33,7 @@ class planner:
         # TODO PART 5 Create the cost-map, the laser_sig is 
         # the standard deviation for the gausiian for which
         # the mean is located on the occupant grid. 
-        self.m_utilites=mapManipulator(laser_sig=0.3)
+        self.m_utilites=mapManipulator(laser_sig=0.5)
             
         self.costMap=self.m_utilites.make_likelihood_field()
         
@@ -70,13 +70,25 @@ if __name__=="__main__":
 
     rclpy.init()
 
-    m_utilites=mapManipulator()
+    m_utilites=mapManipulator(laser_sig=0.5)
     map_likelihood=m_utilites.make_likelihood_field()
-    path=search(map_likelihood, (2,10), (70,90), 'euclidean') # changed 0 to [0,0]
+    path=search(map_likelihood, (80,130), (110,110), 'euclidean') # changed 0 to [0,0]
     pathCart = list(map(m_utilites.cell_2_position, path))
     # obstacles = m_utilites.getAllObstacles()
     # plt.scatter([lin[0] for lin in obstacles], [lin[1] for lin in obstacles])
     imageArray = m_utilites.getMap()
     plt.imshow(imageArray, cmap='gray')
+
+
+    plt.scatter(path[0][0], path[0][1], label='Start Point 1', color='r')
+    plt.scatter(path[-1][0], path[-1][1], label='End Point 1', color='c')
     plt.plot([lin[0] for lin in path], [lin[1] for lin in path])
+
+    path=search(map_likelihood, (110,110), (170,170), 'euclidean') # changed 0 to [0,0]
+    plt.scatter(path[0][0], path[0][1], label='Start Point 2', color='c')
+    plt.scatter(path[-1][0], path[-1][1], label='End Point 2', color='g')
+    plt.plot([lin[0] for lin in path], [lin[1] for lin in path])
+
+    plt.grid()
+
     plt.show()
