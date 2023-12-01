@@ -58,7 +58,8 @@ class planner:
         formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
         np.savetxt('obstaclesMap_' + formatted_datetime + '.txt', obstacles)
         np.savetxt('path_cart_' + formatted_datetime + '.txt', path_cart)
-
+        np.savetxt('path_cell_' + formatted_datetime + '.txt', path_cell)
+        np.savetxt('imageArray.txt', self.m_utilites.getMap())
         # TODO PART 5 return the path as list of [x,y]
         return path_cart
 
@@ -71,9 +72,11 @@ if __name__=="__main__":
 
     m_utilites=mapManipulator()
     map_likelihood=m_utilites.make_likelihood_field()
-    path=search(map_likelihood, (0,0), (70,90), 'euclidean') # changed 0 to [0,0]
+    path=search(map_likelihood, (2,10), (70,90), 'euclidean') # changed 0 to [0,0]
     pathCart = list(map(m_utilites.cell_2_position, path))
-    obstacles = m_utilites.getAllObstacles()
-    plt.scatter([lin[0] for lin in obstacles], [lin[1] for lin in obstacles])
-    plt.scatter([lin[0] for lin in pathCart], [lin[1] for lin in pathCart])
+    # obstacles = m_utilites.getAllObstacles()
+    # plt.scatter([lin[0] for lin in obstacles], [lin[1] for lin in obstacles])
+    imageArray = m_utilites.getMap()
+    plt.imshow(imageArray, cmap='gray')
+    plt.plot([lin[0] for lin in path], [lin[1] for lin in path])
     plt.show()
