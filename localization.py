@@ -88,10 +88,9 @@ class localization(Node):
             
             self.kalmanInitialized = True
 
-        
-        dt = time.time() - self.timelast
+        dt = (Time.from_msg(odom_msg.header.stamp).nanoseconds - self.timelast)/1e9
 
-        self.timelast=time.time()
+        self.timelast=Time.from_msg(odom_msg.header.stamp).nanoseconds
 
 
         z=np.array([odom_msg.twist.twist.linear.x,
