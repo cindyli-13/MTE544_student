@@ -19,7 +19,7 @@ from rclpy import init, spin, spin_once
 
 import numpy as np
 import message_filters
-
+from datetime import datetime
 
 
 rawSensors=0; kalmanFilter=1
@@ -29,11 +29,12 @@ odom_qos=QoSProfile(reliability=2, durability=2, history=1, depth=10)
 
 class localization(Node):
     
-    def __init__(self, type, loggerName="robotPose.csv", loggerHeaders=["imu_ax", "imu_ay", "kf_ax", "kf_ay","kf_vx","kf_w","kf_x", "kf_y","stamp"]):
+    def __init__(self, type, loggerName="robotPose.csv", loggerHeaders=["kf_x","kf_y","stamp"]):
 
         super().__init__("localizer")
-        
-        
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        loggerName = "robotPose_" + formatted_datetime + ".csv"
         self.loc_logger=Logger( loggerName , loggerHeaders)
         self.pose=None
         
@@ -107,6 +108,7 @@ class localization(Node):
                             xhat[1],
                             normalize_angle(xhat[2]),
                             odom_msg.header.stamp])
+        self.loc_logger.log_values([xhat[0], xhat[1],Time.from_msg(odom_msg.header.stamp).nanoseconds])
         
     def odom_callback(self, pose_msg):
         
