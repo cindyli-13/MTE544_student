@@ -3,16 +3,12 @@ from utilities import FileReader
 import numpy as np
 def plot_errors():
 
-    # obstacles = np.loadtxt('obstaclesMap_2023-12-01 10:41:27.txt')
-    # path_cart_1 = np.loadtxt('path_cart_2023-12-01 10:41:27.txt')
-    path_cell_1 = np.loadtxt('path_cell_2023-12-01 15:18:09.txt')
 
-    # path_cart_2 = np.loadtxt('path_cart_2023-12-01 10:41:27.txt')
-    path_cell_2 = np.loadtxt('path_cell_2023-12-01 15:18:56.txt')
+    path_cell_1 = np.loadtxt('path_cell_2023-12-01 15_18_09_KF_InLab_Run1.txt')
+
+    path_cell_2 = np.loadtxt('path_cell_2023-12-01 15_18_56_KF_InLab_Run2.txt')
 
     imageArray = np.loadtxt('imageArray.txt')
-
-    # headers, values=FileReader("robotPose_2023-11-30 22:28:19.csv").read_file()
 
     plt.imshow(imageArray, cmap='gray')
 
