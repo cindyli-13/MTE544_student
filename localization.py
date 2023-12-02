@@ -89,8 +89,8 @@ class localization(Node):
             
             self.kalmanInitialized = True
 
+        # for simulation purposes: use odom message time to get dt for Kalman Filter because real time factor is slow
         dt = (Time.from_msg(odom_msg.header.stamp).nanoseconds - self.timelast)/1e9
-
         self.timelast=Time.from_msg(odom_msg.header.stamp).nanoseconds
 
 
