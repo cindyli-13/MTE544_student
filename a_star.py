@@ -74,6 +74,7 @@ def search(maze, start, end, heuristics_mode):
     start_node.h = heuristics(heuristics_mode, start, end)
     start_node.f = start_node.g + start_node.h
 
+    # end node g, h, f initialized to 0 because only the position matters. 
     end_node = Node(position=end)
     end_node.g = 0
     end_node.h = 0
@@ -82,7 +83,7 @@ def search(maze, start, end, heuristics_mode):
     # Initialize both yet_to_visit and visited list
     # in this list we will put all node that are yet_to_visit for exploration. 
     # From here we will find the lowest cost node to expand next
-    yet_to_visit_list = dict() # key = position, value = node object
+    yet_to_visit_list = dict() # key = position, value = node object, a dictionary used here to allow for faster indexing for duplicate child detection
     # in this list we will put all node those already explored so that we don't explore it again
     visited_list = set() # set of node positions that have already been visited
 
@@ -101,8 +102,8 @@ def search(maze, start, end, heuristics_mode):
 
     # TODO PART 4 what squares do we search . serarch movement is left-right-top-bottom 
     #(4 movements) from every positon
-    x_dist = 1
-    y_dist = 1
+    x_dist = 1 # distance to move in the x direction ( one cell distance was used in this lab )
+    y_dist = 1 # distance to move in the y direction ( one cell distance was used in this lab )
     move  =  [[0, y_dist], # go up
               [-x_dist, 0], # go left
               [0, -y_dist], # go down
@@ -176,14 +177,17 @@ def search(maze, start, end, heuristics_mode):
             if child.position in visited_list:
                 continue
 
-            # TODO PART 4 Create the f, g, and h values
+            # TODO PART 4 Create the f, g, and h values 
+            # calculate cost as cost of current node + distance from current node to child node
             child.g = sqrt((current_node.position[0] - child.position[0])**2 + (current_node.position[1] - child.position[1])**2) + current_node.g
-            # Heuristic costs calculated here, this is using eucledian distance
+            # Heuristic costs calculated here based on heuristics_mode
             child.h = heuristics(heuristics_mode, child.position, end_node.position)
 
             child.f = child.g + child.h
 
+            # if child is already in yet to visit list
             if child.position in yet_to_visit_list:
+                # child cost is less than duplicate child in visited list, change to this child 
                 if child.g < yet_to_visit_list[child.position].g:
                     yet_to_visit_list[child.position] = child
             else:

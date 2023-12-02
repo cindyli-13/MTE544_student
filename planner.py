@@ -52,7 +52,8 @@ class planner:
         # TODO PART 5 convert the cell pixels into the cartesian coordinates
         path_cell = search(self.costMap, startPose, endPose, "euclidean")
         path_cart = list(map(self.m_utilites.cell_2_position, path_cell))
-
+        
+        # save information for plotting purposes
         obstacles = self.m_utilites.getAllObstacles()
         current_datetime = datetime.now()
         formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
@@ -72,10 +73,9 @@ if __name__=="__main__":
 
     m_utilites=mapManipulator(laser_sig=0.5)
     map_likelihood=m_utilites.make_likelihood_field()
-    path=search(map_likelihood, (80,130), (110,110), 'euclidean') # changed 0 to [0,0]
+    path=search(map_likelihood, (80,130), (110,110), 'euclidean') 
     pathCart = list(map(m_utilites.cell_2_position, path))
-    # obstacles = m_utilites.getAllObstacles()
-    # plt.scatter([lin[0] for lin in obstacles], [lin[1] for lin in obstacles])
+
     imageArray = m_utilites.getMap()
     plt.imshow(imageArray, cmap='gray')
 
@@ -84,7 +84,7 @@ if __name__=="__main__":
     plt.scatter(path[-1][0], path[-1][1], label='End Point 1', color='c')
     plt.plot([lin[0] for lin in path], [lin[1] for lin in path])
 
-    path=search(map_likelihood, (110,110), (170,170), 'euclidean') # changed 0 to [0,0]
+    path=search(map_likelihood, (110,110), (170,170), 'euclidean') 
     plt.scatter(path[0][0], path[0][1], label='Start Point 2', color='c')
     plt.scatter(path[-1][0], path[-1][1], label='End Point 2', color='g')
     plt.plot([lin[0] for lin in path], [lin[1] for lin in path])
